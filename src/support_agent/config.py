@@ -41,6 +41,10 @@ class Settings(BaseSettings):
     api_key: SecretStr | None = None
     cors_origins: list[str] = ["http://localhost:8501"]
 
+    # Demo
+    demo_mode: bool = False
+    demo_reset_hours: float = 6.0
+
 
 @lru_cache
 def get_settings() -> Settings:

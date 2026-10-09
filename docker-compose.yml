@@ -1,0 +1,42 @@
+x-app: &app
+  build: .
+  image: support-resolution-agent:latest
+  env_file: .env
+  restart: unless-stopped
+
+services:
+  api:
+    <<: *app
+    environment:
+      DATABASE_URL: sqlite:////app/var/store.db
+      CHECKPOINT_DB_PATH: /app/var/checkpoints.db
+      CHROMA_DIR: /app/var/chroma
+      DEMO_MODE: "true"
+    command: >
+      sh -c "python -m support_agent.bootstrap &&
+             uvicorn support_agent.api.main:app --host 0.0.0.0 --port 8000
+             --proxy-headers --forwarded-allow-ips='*'"
+    volumes:
+      - app-data:/app/var
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  ui:
+    <<: *app
+    environment:
+      SUPPORT_API_URL: http://api:8000
+    command: ["streamlit", "run", "ui/streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+    ports:
+      - "8501:8501"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  app-data:

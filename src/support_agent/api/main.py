@@ -29,6 +29,8 @@ from support_agent.api.schemas import (
 from support_agent.config import get_settings
 from support_agent.graph.builder import get_graph
 from support_agent.service import get_history, list_tickets, run_turn, stream_turn
+import asyncio
+from support_agent.bootstrap import demo_reset_loop
 
 logger = logging.getLogger("support_agent.api")
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
@@ -49,9 +51,19 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s"
     )
+    settings = get_settings()
     get_graph()  # Warm up: compile the graph and open the checkpointer once
+
+    reset_task = None
+    if settings.demo_mode:
+        reset_task = asyncio.create_task(demo_reset_loop(settings.demo_reset_hours))
+        logger.info("Demo mode on: data resets every %s hours", settings.demo_reset_hours)
+
     logger.info("Support agent API ready")
     yield
+
+    if reset_task:
+        reset_task.cancel()
 
 
 def _sse(event: dict) -> str:
