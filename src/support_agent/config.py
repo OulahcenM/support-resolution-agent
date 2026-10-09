@@ -45,6 +45,13 @@ class Settings(BaseSettings):
     demo_mode: bool = False
     demo_reset_hours: float = 6.0
 
+    # Web widget & public endpoint
+    web_dir: Path = PROJECT_ROOT / "web"
+    public_chat_enabled: bool = True
+    public_rate_limit: int = 20  # messages per IP per window
+    public_rate_window_seconds: int = 600
+    public_daily_cap: int = 1000  # all visitors combined, per 24h
+
 
 @lru_cache
 def get_settings() -> Settings:

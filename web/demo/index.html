@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lumen & Co. — AI Support Demo</title>
+  <meta name="description" content="Live demo of an AI customer support agent that resolves orders, returns and refunds end to end.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #FAF8F5;
+      --surface: #FFFFFF;
+      --text: #1F2937;
+      --muted: #6B7280;
+      --border: #ECE7E1;
+      --accent: #4F46E5;
+      --dark: #111827;
+      --radius: 16px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+
+    .demo-bar { background: var(--dark); color: #D1D5DB; font-size: 13px; text-align: center; padding: 10px 16px; }
+    .demo-bar strong { color: #fff; font-weight: 600; }
+
+    .nav { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+    .logo { font-family: Fraunces, serif; font-size: 24px; font-weight: 600; letter-spacing: -0.01em; }
+    .nav-links { display: flex; gap: 28px; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; }
+    .nav-links a:hover { color: var(--text); }
+
+    .hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: center; padding: 48px 0 80px; }
+    .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+    .hero h1 { font-family: Fraunces, serif; font-weight: 500; font-size: clamp(38px, 5.4vw, 60px); line-height: 1.04; letter-spacing: -0.02em; margin: 14px 0 20px; }
+    .hero p { color: var(--muted); font-size: 18px; max-width: 46ch; margin-bottom: 28px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 24px; border-radius: 999px; border: 1px solid transparent; font: inherit; font-weight: 500; text-decoration: none; cursor: pointer; transition: transform 0.15s ease; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-dark { background: var(--dark); color: #fff; }
+    .btn-ghost { background: transparent; color: var(--text); border-color: var(--border); }
+    .hero-art { aspect-ratio: 4 / 5; border-radius: 28px; position: relative; overflow: hidden; background: linear-gradient(160deg, #EFE6DA 0%, #D8C4A8 100%); }
+    .hero-art::before { content: ""; position: absolute; width: 58%; aspect-ratio: 1; border-radius: 50%; left: 21%; top: 18%; background: radial-gradient(circle at 35% 30%, #FFF8EE, #E4CFB0 70%); box-shadow: 0 30px 60px rgba(120, 90, 50, 0.25); }
+    .hero-art::after { content: ""; position: absolute; left: 12%; right: 12%; bottom: 14%; height: 12%; border-radius: 999px; background: rgba(120, 90, 50, 0.18); filter: blur(14px); }
+
+    section { padding: 24px 0 56px; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; margin-bottom: 24px; }
+    .section-title { font-family: Fraunces, serif; font-weight: 500; font-size: 30px; letter-spacing: -0.01em; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 24px; }
+    .card .img { aspect-ratio: 1; border-radius: var(--radius); margin-bottom: 14px; position: relative; overflow: hidden; }
+    .card .img::after { content: ""; position: absolute; inset: 26%; border-radius: 40% 40% 46% 46%; background: rgba(255, 255, 255, 0.35); box-shadow: inset 0 -12px 24px rgba(0, 0, 0, 0.06); }
+    .card h3 { font-size: 15px; font-weight: 500; }
+    .card .price { color: var(--muted); font-size: 14px; }
+    .badge { position: absolute; top: 12px; left: 12px; z-index: 1; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: var(--dark); color: #fff; }
+
+    .assistant { background: var(--surface); border: 1px solid var(--border); border-radius: 28px; padding: 44px; display: grid; grid-template-columns: 1fr 1fr; gap: 44px; }
+    .assistant h2 { font-family: Fraunces, serif; font-weight: 500; font-size: 32px; line-height: 1.15; margin: 10px 0 16px; }
+    .assistant p { color: var(--muted); margin-bottom: 22px; }
+    .features { list-style: none; display: grid; gap: 14px; }
+    .features li { display: flex; gap: 12px; font-size: 15px; }
+    .features li::before { content: "✓"; flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 600; background: color-mix(in srgb, var(--accent) 12%, white); color: var(--accent); }
+    .scenarios { display: grid; gap: 10px; }
+    .scenarios h3 { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+    .scenario { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg); font: inherit; text-align: left; cursor: pointer; transition: border-color 0.15s ease, background 0.15s ease; }
+    .scenario:hover { border-color: var(--accent); background: #fff; }
+    .scenario strong { display: block; font-size: 14px; font-weight: 600; }
+    .scenario span { font-size: 13px; color: var(--muted); }
+    .scenario .go { color: var(--accent); font-weight: 600; flex-shrink: 0; }
+
+    .accounts { margin-top: 28px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+    th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; background: var(--bg); }
+    tr:last-child td { border-bottom: none; }
+    code { font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 13px; }
+    .table-wrap { overflow-x: auto; }
+
+    footer { border-top: 1px solid var(--border); padding: 32px 0 120px; color: var(--muted); font-size: 14px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; }
+    footer a { color: var(--text); font-weight: 500; }
+
+    @media (max-width: 860px) {
+      .hero, .assistant { grid-template-columns: 1fr; }
+      .hero-art { aspect-ratio: 16 / 10; }
+      .assistant { padding: 28px; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-bar">
+    <strong>Live demo</strong> — Lumen &amp; Co. is a fictional store. Click the chat bubble to talk to its AI support agent.
+  </div>
+
+  <div class="container">
+    <header class="nav">
+      <div class="logo">Lumen &amp; Co.</div>
+      <nav class="nav-links" aria-label="Main">
+        <a href="#shop">Shop</a>
+        <a href="#support">Support</a>
+        <a href="#accounts">Test accounts</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="hero">
+        <div>
+          <div class="eyebrow">Home &amp; lifestyle</div>
+          <h1>Thoughtful objects for slower living.</h1>
+          <p>Ceramics, linen and warm light for every room. And if anything goes wrong with an order, our assistant resolves it in seconds — day or night.</p>
+          <div class="actions">
+            <a class="btn btn-dark" href="#shop">Shop the collection</a>
+            <button class="btn btn-ghost" type="button" data-open-chat>Chat with support</button>
+          </div>
+        </div>
+        <div class="hero-art" role="img" aria-label="Decorative ceramic sphere"></div>
+      </div>
+
+      <section id="shop">
+        <div class="section-head"><h2 class="section-title">Bestsellers</h2></div>
+        <div class="grid">
+          <article class="card"><div class="img" style="background:linear-gradient(140deg,#E8DFD3,#CBB9A4)"></div><h3>Ceramic Coffee Mug Set</h3><div class="price">$14.99</div></article>
+          <article class="card"><div class="img" style="background:linear-gradient(140deg,#F3E6D8,#E2C9A6)"></div><h3>Soy Candle Trio</h3><div class="price">$29.99</div></article>
+          <article class="card"><div class="img" style="background:linear-gradient(140deg,#EDE4D6,#D6C3A5)"></div><h3>Linen Table Lamp</h3><div class="price">$89.00</div></article>
+          <article class="card"><div class="img" style="background:linear-gradient(140deg,#DCD3C8,#B9AC9C)"></div><h3>Wool Throw Blanket</h3><div class="price">$79.00</div></article>
+          <article class="card"><div class="img" style="background:linear-gradient(140deg,#E6D5BF,#C49A6C)"></div><h3>Oak Accent Chair</h3><div class="price">$349.00</div></article>
+          <article class="card"><div class="img" style="background:linear-gradient(140deg,#F1E3C2,#D4AF6A)"></div><h3>Round Brass Mirror</h3><div class="price">$120.00</div></article>
+          <article class="card"><div class="img" style="background:linear-gradient(140deg,#E3E0D9,#B8B2A6)"></div><h3>Stoneware Vase</h3><div class="price">$34.50</div></article>
+          <article class="card"><div class="img" style="background:linear-gradient(140deg,#EFE9E1,#D3C7B6)"><span class="badge">Final Sale</span></div><h3>Clearance Jute Rug</h3><div class="price">$45.00</div></article>
+        </div>
+      </section>
+
+      <section id="support">
+        <div class="assistant">
+          <div>
+            <div class="eyebrow">AI customer support</div>
+            <h2>Support that actually resolves issues — not just answers questions.</h2>
+            <p>This agent connects to the store's orders and policies, takes real actions, and knows when to hand over to a human.</p>
+            <ul class="features">
+              <li>Verifies the customer's order number and email before sharing anything</li>
+              <li>Answers only from the store's official policies — never invents rules</li>
+              <li>Processes refunds and cancellations, with confirmation first</li>
+              <li>Escalates lost packages and upset customers to the team with a full summary</li>
+              <li>Replies in the customer's language, including Arabic</li>
+            </ul>
+          </div>
+          <div class="scenarios">
+            <h3>Try a scenario</h3>
+            <button class="scenario" type="button" data-ask="Where is my order ORD-1002? My email is sarah.johnson@example.com">
+              <div><strong>Track an order</strong><span>Live status and tracking number</span></div><span class="go">Try →</span>
+            </button>
+            <button class="scenario" type="button" data-ask="I'd like to return order ORD-1001. Email: sarah.johnson@example.com">
+              <div><strong>Return &amp; refund</strong><span>Eligibility check, then refund after confirmation</span></div><span class="go">Try →</span>
+            </button>
+            <button class="scenario" type="button" data-ask="Can I return the rug from ORD-1006? aisha.khan@example.com">
+              <div><strong>Final Sale item</strong><span>Policy-aware partial return</span></div><span class="go">Try →</span>
+            </button>
+            <button class="scenario" type="button" data-ask="This is ridiculous, my mirror ORD-1007 never arrived! lucas.moreau@example.com">
+              <div><strong>Lost package, upset customer</strong><span>Empathy + human escalation ticket</span></div><span class="go">Try →</span>
+            </button>
+            <button class="scenario" type="button" data-ask="واش نقدر نرجع منتوج شريتو؟">
+              <div><strong>Ask in Arabic</strong><span>Multilingual answers from the same policies</span></div><span class="go">Try →</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="accounts" id="accounts">
+          <div class="section-head"><h2 class="section-title">Test accounts</h2></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Order</th><th>Email</th><th>What happens</th></tr></thead>
+              <tbody>
+                <tr><td><code>ORD-1001</code></td><td><code>sarah.johnson@example.com</code></td><td>Delivered 5 days ago — refund auto-approved</td></tr>
+                <tr><td><code>ORD-1002</code></td><td><code>sarah.johnson@example.com</code></td><td>In transit with UPS</td></tr>
+                <tr><td><code>ORD-1003</code></td><td><code>james.miller@example.com</code></td><td>Outside the 30-day return window</td></tr>
+                <tr><td><code>ORD-1004</code></td><td><code>james.miller@example.com</code></td><td>$349 refund — sent to human review</td></tr>
+                <tr><td><code>ORD-1005</code></td><td><code>aisha.khan@example.com</code></td><td>Processing — can be cancelled</td></tr>
+                <tr><td><code>ORD-1006</code></td><td><code>aisha.khan@example.com</code></td><td>Contains a Final Sale item</td></tr>
+                <tr><td><code>ORD-1007</code></td><td><code>lucas.moreau@example.com</code></td><td>Shipped 14 days ago — likely lost</td></tr>
+                <tr><td><code>ORD-1008</code></td><td><code>lucas.moreau@example.com</code></td><td>Returned — refund already approved</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>Lumen &amp; Co. is a fictional store. Demo data resets every few hours.</span>
+      <span>AI support agent built by <a href="https://github.com/OulahcenM" target="_blank" rel="noopener noreferrer">AiWoop</a></span>
+    </footer>
+  </div>
+
+  <script>
+    document.addEventListener("click", (event) => {
+      const widget = window.AiWoopWidget;
+      if (!widget) return;
+      const scenario = event.target.closest("[data-ask]");
+      if (scenario) widget.ask(scenario.dataset.ask);
+      else if (event.target.closest("[data-open-chat]")) widget.open();
+    });
+  </script>
+
+  <!-- The only line a client adds to their own site -->
+  <script
+    src="/widget/widget.js"
+    data-title="Lumen & Co."
+    data-subtitle="AI assistant · replies instantly"
+    data-accent="#4F46E5"
+    data-brand-name="AiWoop"
+    data-brand-url="https://github.com/OulahcenM"
+    defer></script>
+</body>
+</html>
