@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import enum
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
 
 from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, Integer, String, Text
@@ -13,7 +13,7 @@ from sqlalchemy.types import TypeDecorator
 
 
 def utcnow() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def cents_to_decimal(cents: int) -> Decimal:
@@ -29,21 +29,15 @@ class UTCDateTime(TypeDecorator[datetime]):
     impl = DateTime
     cache_ok = True
 
-    def process_bind_param(
-        self, value: datetime | None, dialect: Dialect
-    ) -> datetime | None:
+    def process_bind_param(self, value: datetime | None, dialect: Dialect) -> datetime | None:
         if value is None:
             return None
         if value.tzinfo is None:
-            raise ValueError(
-                "Naive datetimes are not allowed; use timezone-aware UTC values."
-            )
-        return value.astimezone(timezone.utc).replace(tzinfo=None)
+            raise ValueError("Naive datetimes are not allowed; use timezone-aware UTC values.")
+        return value.astimezone(UTC).replace(tzinfo=None)
 
-    def process_result_value(
-        self, value: datetime | None, dialect: Dialect
-    ) -> datetime | None:
-        return value.replace(tzinfo=timezone.utc) if value is not None else None
+    def process_result_value(self, value: datetime | None, dialect: Dialect) -> datetime | None:
+        return value.replace(tzinfo=UTC) if value is not None else None
 
 
 def _enum_column(enum_cls: type[enum.Enum]) -> Enum:

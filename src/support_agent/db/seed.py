@@ -3,7 +3,7 @@
 Run with:  uv run python -m support_agent.db.seed
 """
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
 from support_agent.db.models import (
@@ -19,16 +19,14 @@ from support_agent.db.session import get_engine, get_session
 
 
 def _days_ago(days: int) -> datetime:
-    return datetime.now(timezone.utc) - timedelta(days=days)
+    return datetime.now(UTC) - timedelta(days=days)
 
 
 def _to_cents(price: str) -> int:
     return int(Decimal(price) * 100)
 
 
-def _item(
-    sku: str, name: str, qty: int, price: str, final_sale: bool = False
-) -> OrderItem:
+def _item(sku: str, name: str, qty: int, price: str, final_sale: bool = False) -> OrderItem:
     return OrderItem(
         sku=sku,
         product_name=name,
@@ -187,9 +185,7 @@ def seed() -> None:
         session.add_all(customers)
 
     order_count = sum(len(c.orders) for c in customers)
-    print(
-        f"Seeded {len(customers)} customers and {order_count} orders into {engine.url}"
-    )
+    print(f"Seeded {len(customers)} customers and {order_count} orders into {engine.url}")
 
 
 if __name__ == "__main__":

@@ -21,9 +21,7 @@ from support_agent.tools.policies import (
     evaluate_return_eligibility,
 )
 
-ReasonCategory = Literal[
-    "damaged_or_defective", "wrong_item", "no_longer_needed", "other"
-]
+ReasonCategory = Literal["damaged_or_defective", "wrong_item", "no_longer_needed", "other"]
 
 
 def _to_cents(value: object) -> int:
@@ -100,9 +98,7 @@ def request_refund(
             Refund(
                 amount_cents=refund_cents,
                 reason=reason,
-                status=RefundStatus.APPROVED
-                if within_limit
-                else RefundStatus.PENDING_REVIEW,
+                status=RefundStatus.APPROVED if within_limit else RefundStatus.PENDING_REVIEW,
             )
         )
 

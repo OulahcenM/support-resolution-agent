@@ -1,6 +1,6 @@
 """Graph nodes and routing functions."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any, Literal
 
 from langchain_core.messages import (
@@ -69,7 +69,7 @@ def agent(state: SupportState) -> dict[str, Any]:
     settings = get_settings()
     system_prompt = AGENT_SYSTEM_PROMPT.format(
         store_name=settings.store_name,
-        today=datetime.now(timezone.utc).date().isoformat(),
+        today=datetime.now(UTC).date().isoformat(),
         intent=state["intent"],
         sentiment=state["sentiment"],
         sentiment_guidance=SENTIMENT_GUIDANCE.get(state["sentiment"], ""),

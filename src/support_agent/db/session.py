@@ -14,9 +14,7 @@ from support_agent.config import get_settings
 def get_engine() -> Engine:
     url = get_settings().database_url
     is_sqlite = url.startswith("sqlite")
-    engine = create_engine(
-        url, connect_args={"check_same_thread": False} if is_sqlite else {}
-    )
+    engine = create_engine(url, connect_args={"check_same_thread": False} if is_sqlite else {})
 
     if is_sqlite:
 

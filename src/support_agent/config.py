@@ -4,9 +4,9 @@ from decimal import Decimal
 from functools import lru_cache
 from pathlib import Path
 
+from dotenv import load_dotenv  # add to imports (installed with pydantic-settings)
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from dotenv import load_dotenv  # add to imports (installed with pydantic-settings)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = PROJECT_ROOT / "data"

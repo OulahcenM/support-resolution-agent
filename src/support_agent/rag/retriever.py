@@ -45,8 +45,7 @@ def format_context(chunks: list[RetrievedChunk]) -> str:
     if not chunks:
         return "No relevant policy information was found in the knowledge base."
     return "\n\n---\n\n".join(
-        f"[Source: {c.source}{f' > {c.section}' if c.section else ''}]\n{c.content}"
-        for c in chunks
+        f"[Source: {c.source}{f' > {c.section}' if c.section else ''}]\n{c.content}" for c in chunks
     )
 
 
