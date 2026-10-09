@@ -6,6 +6,7 @@ from pathlib import Path
 
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from dotenv import load_dotenv  # add to imports (installed with pydantic-settings)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = PROJECT_ROOT / "data"
@@ -39,4 +40,6 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
+    # Export .env to os.environ so libraries like LangSmith can read their variables.
+    load_dotenv(PROJECT_ROOT / ".env", override=False)
     return Settings()
