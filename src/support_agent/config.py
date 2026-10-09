@@ -37,6 +37,10 @@ class Settings(BaseSettings):
     return_label_fee: Decimal = Decimal("5.95")
     lost_package_threshold_days: int = 10
 
+    # API
+    api_key: SecretStr | None = None
+    cors_origins: list[str] = ["http://localhost:8501"]
+
 
 @lru_cache
 def get_settings() -> Settings:
