@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     store_name: str = "Lumen & Co."
     return_window_days: int = 30
     auto_refund_limit: Decimal = Decimal("100.00")
+    return_label_fee: Decimal = Decimal("5.95")
     lost_package_threshold_days: int = 10
 
 
