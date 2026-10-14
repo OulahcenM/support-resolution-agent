@@ -10,7 +10,7 @@
 
 ![Chat widget on the demo store](docs/images/widget.png)
 
-**[▶ Watch the demo video](VIDEO_LINK)**
+
 
 ---
 
